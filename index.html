@@ -24,24 +24,42 @@
     <!-- Chatbot Webchat Script -->
     <script src="https://app.chatgptbuilder.io/webchat/plugin.js?v=5"></script>
     <script>
-        // Initialize the chatbot with local session storage
+        // Define a key to store session data in localStorage
         const sessionKey = "chatbotSession";
 
-        // Retrieve session data if available
-        const existingSession = localStorage.getItem(sessionKey);
+        // Attempt to retrieve existing session data
+        let existingSession = localStorage.getItem(sessionKey);
+        if (existingSession) {
+            try {
+                existingSession = JSON.parse(existingSession);
+            } catch (error) {
+                console.error("Failed to parse session data:", error);
+                existingSession = null;
+            }
+        }
 
+        // Debug: Log retrieved session data
+        console.log("Loaded session from localStorage:", existingSession);
+
+        // Initialize the chatbot
         ktt10.setup({
             id: "4oP35ATsmIT",
             accountId: "1970516",
             color: "#010101",
-            session: existingSession ? JSON.parse(existingSession) : null, // Pass the session if it exists
+            session: existingSession, // Pass the session if it exists
             onSessionSave: function(sessionData) {
-                // Save session data to localStorage when updated
-                localStorage.setItem(sessionKey, JSON.stringify(sessionData));
+                try {
+                    // Save session data to localStorage
+                    localStorage.setItem(sessionKey, JSON.stringify(sessionData));
+                    console.log("Session data saved to localStorage:", sessionData);
+                } catch (error) {
+                    console.error("Failed to save session data:", error);
+                }
             }
         });
 
-        // Optional: Clear session storage (for testing)
+        // Optional: Clear session storage for testing
+        // Uncomment the line below to reset the session
         // localStorage.removeItem(sessionKey);
     </script>
 </body>
